@@ -1,4 +1,4 @@
-var winCount, loseCount, winStatus, gamePlays = [];
+var winCount, loseCount, winStatus, gamePlays = [], gLog;
 
 //Check Initial Volume Status
 var soundBtn = document.getElementById('soundBtn');
@@ -18,8 +18,16 @@ loseCount = localStorage.getItem('loseCount');
 if (loseCount) document.getElementById('loseCount').innerHTML = +loseCount
 else document.getElementById('loseCount').innerHTML = 0;
 
+// Checking Initial Log Visibility Status
+gLog = JSON.parse(localStorage.getItem('glogs'));
+if(gLog && gLog === true){
+    document.getElementById('logBtn').innerHTML = "Hide Logs";
+}else{
+    document.getElementById('logBtn').innerHTML = "Show Logs";
+}
+
 //Initial Logs
-getLogs() 
+getLogs()
 
 //Start the Game
 function startGame(userChoice) {
@@ -128,7 +136,7 @@ function getLogs() {
     var i = 1;
     gp.forEach(e => {
         var trow = "<tr>";
-        trow += "<td>"+ i +"</td>"
+        trow += "<td>" + i + "</td>"
         trow += "<td>" + e.user + "</td>";
         trow += "<td>" + e.toss + "</td>";
 
@@ -138,4 +146,27 @@ function getLogs() {
         gl.innerHTML += trow;
         i++;
     });
+}
+
+//Toggle Logs
+function toggleLogs() {
+    let gl = document.getElementsByClassName('gameLogs')[0];
+    let cw = document.getElementsByClassName('coinWrapper')[0];
+    let lb = document.getElementById('logBtn');
+    gLog = !gLog;
+    if (!gLog) {
+        gl.classList.add('hide')
+        cw.classList.remove('col-sm-6');
+        cw.classList.add('col-sm-12');
+        lb.innerHTML = "Show Logs";
+        localStorage.setItem('glogs',false);
+        console.log('Game Logs are Hidden');
+    } else {
+        gl.classList.remove('hide');
+        cw.classList.remove('col-sm-12');
+        cw.classList.add('col-sm-6');
+        lb.innerHTML = "Hide Logs";
+        localStorage.setItem('glogs',true);
+        console.log('Showing Game Logs !!');
+    }
 }

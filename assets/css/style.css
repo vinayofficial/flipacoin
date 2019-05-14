@@ -9,10 +9,14 @@
     margin: 5em auto;
 }
 
+.gameLogs{
+    margin-top: 3em;
+}
+
+
 .coinbox img{
     max-width: 100%;
 }
-
 
 .coinHead.flip{
     animation: flipIt 0.5s ease-in-out infinite;  
