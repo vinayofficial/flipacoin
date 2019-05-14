@@ -72,7 +72,7 @@ function startGame(userChoice) {
                 el = document.getElementById('loseCount');
                 loseCount = +el.innerHTML + 1;
                 el.innerHTML = loseCount;
-                localStoragecd CanvasGradient,ṃ9=-80982.setItem('loseCount', loseCount);
+                localStorage.setItem('loseCount', loseCount);
                 if (volStatus) loseSound.play();
             }
 
