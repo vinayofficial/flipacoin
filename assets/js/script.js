@@ -20,10 +20,16 @@ else document.getElementById('loseCount').innerHTML = 0;
 
 // Checking Initial Log Visibility Status
 gLog = JSON.parse(localStorage.getItem('glogs'));
-if(gLog && gLog === true){
+if (gLog && gLog === true) {
     document.getElementById('logBtn').innerHTML = "Hide Logs";
-}else{
+    document.getElementsByClassName('gameLogs')[0].classList.remove('hide');
+    document.getElementsByClassName('coinWrapper')[0].classList.add('col-sm-6');
+    document.getElementsByClassName('coinWrapper')[0].classList.remove('col-sm-12');
+} else {
     document.getElementById('logBtn').innerHTML = "Show Logs";
+    document.getElementsByClassName('gameLogs')[0].classList.add('hide');
+    document.getElementsByClassName('coinWrapper')[0].classList.add('col-sm-12');
+    document.getElementsByClassName('coinWrapper')[0].classList.remove('col-sm-6');
 }
 
 //Initial Logs
@@ -54,8 +60,8 @@ function startGame(userChoice) {
     //Getting Result
     let result = Math.floor(Math.random() * 2);
     console.log('random number is: ' + result);
-    // 1 = true; 0 = false;
 
+    // 1 = true; 0 = false;
     if (result) result = 'Head';
     else result = 'Tail';
 
@@ -77,6 +83,7 @@ function startGame(userChoice) {
             else {
                 winStatus = false;
                 output = "Better Luck Next Time !!";
+                //Increase Score
                 el = document.getElementById('loseCount');
                 loseCount = +el.innerHTML + 1;
                 el.innerHTML = loseCount;
@@ -89,16 +96,8 @@ function startGame(userChoice) {
                 toss: result,
                 winning: winStatus
             }
-
-            gamePlays.push(res);
-            localStorage.setItem('gamePlays', JSON.stringify(gamePlays));
-            getLogs();
-            console.log('user selected: ' + userChoice);
-        } else {
-            output = '';
-        }
-
-        console.log('Result: ' + result);
+            getLogs(res);
+        } else output = '';
 
         // Generating Output
         el = document.getElementById('result');
@@ -113,39 +112,58 @@ function startGame(userChoice) {
 
 }
 
+//Reset Game
 function resetGame() {
     winCountHTML = document.getElementById('winCount').innerHTML = 0;
     loseCountHTML = document.getElementById('loseCount').innerHTML = 0;
+    document.getElementById('gameLogs').innerHTML = '<tr><td colspan="4"><h3 class="text-muted"> No Game Logs Available</h3></td></tr>';
     localStorage.setItem('winCount', 0);
     localStorage.setItem('loseCount', 0);
-    console.log('The game has reset !!');
+    localStorage.removeItem('gamePlays');
+    location.reload();
 }
 
+// Get Logs
+function getLogs(newEntry = null) {
+    
+    //Submit a New Entry
+    if (newEntry && newEntry != null) {
+        if (gamePlays.push(newEntry)) {
+            localStorage.setItem('gamePlays', JSON.stringify(gamePlays));
+            console.log('New Entry Submitted !!');
+        };
+    }
+
+    //Get data from localStorage
+    var gp = JSON.parse(localStorage.getItem('gamePlays'));
+    var gl = document.getElementById('gameLogs');
+    gl.innerHTML = '';
+    var i = 1;
+    if (gp) {
+        gp.forEach(e => {
+            var trow = "<tr>";
+            trow += "<td>" + i + "</td>"
+            trow += "<td>" + e.user + "</td>";
+            trow += "<td>" + e.toss + "</td>";
+
+            if (e.winning) trow += "<td class='text-success'> Won </td>"
+            else trow += "<td class='text-danger'> Lost </td>";
+
+            gl.innerHTML += trow;
+            i++;
+        });
+    } else {
+        document.getElementById('gameLogs').innerHTML = '<tr><td colspan="4"><h3 class="text-muted"> No Game Logs Available</h3></td></tr>';
+    }
+}
+
+// Toggle Sound
 function toggleSound() {
     volStatus = !volStatus;
     localStorage.setItem('volume', volStatus);
     if (volStatus) soundBtn.innerHTML = soundOn;
     else soundBtn.innerHTML = soundOff;
     console.log('volume status is: ' + volStatus);
-}
-
-function getLogs() {
-    var gp = JSON.parse(localStorage.getItem('gamePlays'))
-    var gl = document.getElementById('gameLogs')
-    gl.innerHTML = '';
-    var i = 1;
-    gp.forEach(e => {
-        var trow = "<tr>";
-        trow += "<td>" + i + "</td>"
-        trow += "<td>" + e.user + "</td>";
-        trow += "<td>" + e.toss + "</td>";
-
-        if (e.winning) trow += "<td class='text-success'> Won </td>"
-        else trow += "<td class='text-danger'> Lost </td>";
-
-        gl.innerHTML += trow;
-        i++;
-    });
 }
 
 //Toggle Logs
@@ -159,14 +177,14 @@ function toggleLogs() {
         cw.classList.remove('col-sm-6');
         cw.classList.add('col-sm-12');
         lb.innerHTML = "Show Logs";
-        localStorage.setItem('glogs',false);
+        localStorage.setItem('glogs', false);
         console.log('Game Logs are Hidden');
     } else {
         gl.classList.remove('hide');
         cw.classList.remove('col-sm-12');
         cw.classList.add('col-sm-6');
         lb.innerHTML = "Hide Logs";
-        localStorage.setItem('glogs',true);
+        localStorage.setItem('glogs', true);
         console.log('Showing Game Logs !!');
     }
 }

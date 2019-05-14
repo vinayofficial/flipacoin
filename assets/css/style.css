@@ -1,3 +1,10 @@
+html,body{
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    overflow-x: hidden;
+}
+
 #gameOptions{
     margin: 5em auto; 
 }
